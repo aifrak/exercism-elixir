@@ -1,1 +1,4 @@
-*/.exercism/
+.exercism
+.elixir_ls
+.idea
+.vscode
