@@ -1,0 +1,13 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      target: vscode
+    volumes:
+      - vscode:/home/app-user/.vscode-server/extensions
+      - vscode-insiders:/home/app-user/.vscode-server-insiders/extensions
+
+volumes:
+  vscode:
+  vscode-insiders:

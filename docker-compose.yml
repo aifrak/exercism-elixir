@@ -1,0 +1,17 @@
+version: "3.9"
+
+services:
+  app:
+    image: aifrak/exercism-elixir:latest
+    build:
+      context: .
+      target: base
+      args:
+        USER_UID: ${USER_UID:-1000}
+        USER_GID: ${USER_GID:-1000}
+    user: ${USER_UID:-1000}:${USER_GID:-1000}
+    command: sleep infinity
+    environment:
+      - LANG=en_US.UTF-8
+    volumes:
+      - .:/app
