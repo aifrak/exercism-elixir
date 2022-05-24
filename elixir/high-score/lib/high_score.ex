@@ -1,25 +1,15 @@
 defmodule HighScore do
-  def new() do
-    # Please implement the new/0 function
-  end
+  @initial_score 0
 
-  def add_player(scores, name, score) do
-    # Please implement the add_player/3 function
-  end
+  def new(), do: Map.new()
 
-  def remove_player(scores, name) do
-    # Please implement the remove_player/2 function
-  end
+  def add_player(scores, name, score \\ @initial_score), do: Map.put_new(scores, name, score)
 
-  def reset_score(scores, name) do
-    # Please implement the reset_score/2 function
-  end
+  def remove_player(scores, name), do: Map.delete(scores, name)
 
-  def update_score(scores, name, score) do
-    # Please implement the update_score/3 function
-  end
+  def reset_score(scores, name), do: Map.put(scores, name, @initial_score)
 
-  def get_players(scores) do
-    # Please implement the get_players/1 function
-  end
+  def update_score(scores, name, score), do: Map.update(scores, name, score, &(&1 + score))
+
+  def get_players(scores), do: Map.keys(scores)
 end
