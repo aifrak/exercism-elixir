@@ -1,7 +1,7 @@
 defmodule DateParser do
-  def day(), do: "\\d{1,2}"
+  def day(), do: "([1-2]\\d|3[0-1]|0?[1-9])"
 
-  def month(), do: "\\d{1,2}"
+  def month(), do: "(1[0-2]|0?[1-9])"
 
   def year(), do: "\\d{4}"
 
