@@ -1,65 +1,36 @@
 defmodule DateParser do
-  def day() do
-    # Please implement the day/0 function
-  end
+  def day(), do: "\\d{1,2}"
 
-  def month() do
-    # Please implement the month/0 function
-  end
+  def month(), do: "\\d{1,2}"
 
-  def year() do
-    # Please implement the year/0 function
-  end
+  def year(), do: "\\d{4}"
 
-  def day_names() do
-    # Please implement the day_names/0 function
-  end
+  def day_names(), do: "(Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)"
 
-  def month_names() do
-    # Please implement the month_names/0 function
-  end
+  def month_names(),
+    do: "(January|February|March|April|May|June|July|August|September|October|November|December)"
 
-  def capture_day() do
-    # Please implement the capture_day/0 function
-  end
+  def capture_day(), do: "(?<day>#{day()})"
 
-  def capture_month() do
-    # Please implement the capture_month/0 function
-  end
+  def capture_month(), do: "(?<month>#{month()})"
 
-  def capture_year() do
-    # Please implement the capture_year/0 function
-  end
+  def capture_year(), do: "(?<year>#{year()})"
 
-  def capture_day_name() do
-    # Please implement the capture_day_name/0 function
-  end
+  def capture_day_name(), do: "(?<day_name>#{day_names()})"
 
-  def capture_month_name() do
-    # Please implement the capture_month_name/0 function
-  end
+  def capture_month_name(), do: "(?<month_name>#{month_names()})"
 
-  def capture_numeric_date() do
-    # Please implement the capture_numeric_date/0 function
-  end
+  def capture_numeric_date(), do: "(#{capture_day()}/#{capture_month()}/#{capture_year()})"
 
-  def capture_month_name_date() do
-    # Please implement the capture_month_name_date/0 function
-  end
+  def capture_month_name_date(),
+    do: "(#{capture_month_name()} #{capture_day()}, #{capture_year()})"
 
-  def capture_day_month_name_date() do
-    # Please implement the capture_day_month_name_date/0 function
-  end
+  def capture_day_month_name_date(),
+    do: "(#{capture_day_name()}, #{capture_month_name()} #{capture_day()}, #{capture_year()})"
 
-  def match_numeric_date() do
-    # Please implement the match_numeric_date/0 function
-  end
+  def match_numeric_date(), do: ~r/^#{capture_numeric_date()}$/
 
-  def match_month_name_date() do
-    # Please implement the match_month_name_day/0 function
-  end
+  def match_month_name_date(), do: ~r/^#{capture_month_name_date()}$/
 
-  def match_day_month_name_date() do
-    # Please implement the match_day_month_name_date/0 function
-  end
+  def match_day_month_name_date(), do: ~r/^#{capture_day_month_name_date()}$/
 end
