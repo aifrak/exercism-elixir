@@ -3,17 +3,14 @@ defmodule TopSecret do
 
   def to_ast(string), do: Code.string_to_quoted!(string)
 
-  def decode_secret_message_part({marker, _, _} = ast, acc) when marker in @definition_markers,
-    do: {ast, [decode_part(ast) | acc]}
+  def decode_secret_message_part({marker, _, args} = ast, acc) when marker in @definition_markers,
+    do: {ast, [decode_part(args) | acc]}
 
   def decode_secret_message_part(ast, acc), do: {ast, acc}
 
-  defp decode_part({_, _, [{_, _, nil} | _]}), do: ""
-
-  defp decode_part({_, _, [{:when, _, [{name, _, args} | _]} | _]}),
-    do: decode_function(name, args)
-
-  defp decode_part({_, _, [{name, _, args} | _]}), do: decode_function(name, args)
+  defp decode_part([{_, _, nil} | _]), do: ""
+  defp decode_part([{:when, _, args} | _]), do: decode_part(args)
+  defp decode_part([{name, _, args} | _]), do: decode_function(name, args)
 
   defp decode_function(name, args) do
     name
