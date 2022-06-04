@@ -1,6 +1,18 @@
 defmodule NewPassport do
+  @retry_interval_in_minutes 15
+  @retry_interval_in_seconds @retry_interval_in_minutes * 60
+
   def get_new_passport(now, birthday, form) do
-    # Please implement the 'get_new_passport/3' function
+    with {:ok, timestamp} <- enter_building(now),
+         {:ok, manual} <- find_counter_information(now),
+         counter <- manual.(birthday),
+         {:ok, checksum} <- stamp_form(timestamp, counter, form),
+         passport_number <- get_new_passport_number(timestamp, counter, checksum) do
+      {:ok, passport_number}
+    else
+      {:coffee_break, _} -> {:retry, NaiveDateTime.add(now, @retry_interval_in_seconds)}
+      {:error, message} -> {:error, message}
+    end
   end
 
   # Do not modify the functions below
