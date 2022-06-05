@@ -7,10 +7,7 @@ defmodule LucasNumbers do
 
   E.g.: 2, 1, 3, 4, 7, 11, 18, 29, ...
   """
-  def generate(1), do: [List.first(@two_first_numbers)]
-  def generate(2), do: @two_first_numbers
-
-  def generate(count) when is_integer(count) and count > length(@two_first_numbers) do
+  def generate(count) when is_integer(count) and count >= 1 do
     @two_first_numbers
     |> List.to_tuple()
     |> Stream.iterate(fn {prev, curr} -> {curr, prev + curr} end)
