@@ -56,7 +56,7 @@ CMD [ "bash" ]
 # —————————————————————————————————————————————— #
 
 FROM mvdan/shfmt:v3.4.3 as shfmt
-FROM hexpm/elixir:1.13.2-erlang-24.2-ubuntu-focal-20210325 as elixir
+FROM hexpm/elixir:1.13.4-erlang-24.3.4.1-ubuntu-focal-20211006 as elixir
 # Install hex and rebar
 RUN set -e \
   && mix local.hex --force \
