@@ -1,10 +1,10 @@
 defmodule Circle do
-  @enforce_keys [:radius, :point]
-  defstruct [:radius, :point]
+  @enforce_keys [:radius, :points]
+  defstruct [:radius, :points]
 
-  def new(radius, point),
+  def new(radius, points),
     do: %__MODULE__{
       radius: radius,
-      point: point
+      points: points
     }
 end
