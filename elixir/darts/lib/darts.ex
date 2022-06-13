@@ -13,14 +13,15 @@ defmodule Darts do
   """
   @spec score(position) :: integer
   def score(coordinates) do
-    dart_concentric = to_concentric(coordinates)
+    dart_radius = to_radius(coordinates)
 
-    Enum.find_value(@circles, 0, &if(dart_concentric <= &1.concentric, do: &1.point))
+    Enum.find_value(@circles, 0, &if(dart_radius <= &1.radius, do: &1.point))
   end
 
-  defp to_concentric({x, y}) do
+  defp to_radius({x, y}) do
     {center_x, center_y} = @target_center
 
-    Float.pow(x - center_x, 2) + Float.pow(y - center_y, 2)
+    (Float.pow(x - center_x, 2) + Float.pow(y - center_y, 2))
+    |> :math.sqrt()
   end
 end

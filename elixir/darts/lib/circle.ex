@@ -1,13 +1,10 @@
 defmodule Circle do
-  @enforce_keys [:radius, :point, :concentric]
-  defstruct [:radius, :point, :concentric]
+  @enforce_keys [:radius, :point]
+  defstruct [:radius, :point]
 
   def new(radius, point),
     do: %__MODULE__{
       radius: radius,
-      point: point,
-      concentric: to_concentric(radius)
+      point: point
     }
-
-  defp to_concentric(radius), do: Integer.pow(radius, 2)
 end
