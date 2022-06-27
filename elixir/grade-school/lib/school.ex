@@ -11,14 +11,18 @@ defmodule School do
   Create a new, empty school.
   """
   @spec new() :: school
-  def new() do
-  end
+  def new(), do: %{}
 
   @doc """
   Add a student to a particular grade in school.
   """
   @spec add(school, String.t(), integer) :: {:ok | :error, school}
   def add(school, name, grade) do
+    if Map.has_key?(school, name) do
+      {:error, school}
+    else
+      {:ok, Map.put_new(school, name, grade)}
+    end
   end
 
   @doc """
@@ -26,6 +30,10 @@ defmodule School do
   """
   @spec grade(school, integer) :: [String.t()]
   def grade(school, grade) do
+    school
+    |> Stream.filter(fn {_, g} -> g == grade end)
+    |> Stream.map(fn {name, _} -> name end)
+    |> Enum.sort()
   end
 
   @doc """
@@ -33,5 +41,10 @@ defmodule School do
   """
   @spec roster(school) :: [String.t()]
   def roster(school) do
+    school
+    |> Map.values()
+    |> Stream.uniq()
+    |> Enum.sort()
+    |> Enum.flat_map(&grade(school, &1))
   end
 end
