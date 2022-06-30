@@ -31,13 +31,11 @@ defmodule Garden do
   defp do_info(<<?\n, rest::binary>>, %{all: all_names} = students, plants),
     do: do_info(rest, %{students | tail: all_names}, plants)
 
-  defp do_info(<<p1, p2, rest::binary>>, %{tail: [name | tail]} = students, plants),
-    do:
-      do_info(
-        rest,
-        %{students | tail: tail},
-        Map.update!(plants, name, &add_plants(&1, p1, p2))
-      )
+  defp do_info(<<p1, p2, rest::binary>>, %{tail: [name | tail]} = students, plants) do
+    updated_plants = Map.update!(plants, name, &add_plants(&1, p1, p2))
+
+    do_info(rest, %{students | tail: tail}, updated_plants)
+  end
 
   defp add_plants(plants, p1, p2) do
     plants
