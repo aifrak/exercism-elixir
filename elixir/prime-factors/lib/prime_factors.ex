@@ -10,12 +10,12 @@ defmodule PrimeFactors do
   The prime factors of 'number' will be ordered lowest to highest.
   """
   @spec factors_for(pos_integer) :: [pos_integer]
-  def factors_for(number), do: do_factors_for(number, 2)
+  def factors_for(number), do: do_factors_for(number, 2, [])
 
-  defp do_factors_for(1, _), do: []
+  defp do_factors_for(1, _, acc), do: Enum.reverse(acc)
 
-  defp do_factors_for(number, divisor) when is_divisible(number, divisor),
-    do: [divisor | do_factors_for(round(number / divisor), divisor)]
+  defp do_factors_for(number, divisor, acc) when is_divisible(number, divisor),
+    do: do_factors_for(round(number / divisor), divisor, [divisor | acc])
 
-  defp do_factors_for(number, divisor), do: do_factors_for(number, divisor + 1)
+  defp do_factors_for(number, divisor, acc), do: do_factors_for(number, divisor + 1, acc)
 end
