@@ -20,7 +20,7 @@ defmodule PerfectNumbers do
 
   def classify(_), do: {:error, "Classification is only possible for natural numbers."}
 
-  def aliquot_sum(number) do
+  defp aliquot_sum(number) do
     1..ceil(number / 2)
     |> Stream.filter(&(is_divisor(&1, number) && number != &1))
     |> Enum.sum()
