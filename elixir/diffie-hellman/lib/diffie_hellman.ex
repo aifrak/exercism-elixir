@@ -36,6 +36,9 @@ defmodule DiffieHellman do
   """
   @spec generate_private_key(prime_p :: integer) :: integer
   def generate_private_key(prime_p) do
+    # More about randomness: https://hashrocket.com/blog/posts/the-adventures-of-generating-random-numbers-in-erlang-and-elixir
+    :crypto.rand_seed()
+    :rand.uniform(prime_p - 1)
   end
 
   @doc """
@@ -46,8 +49,8 @@ defmodule DiffieHellman do
   """
   @spec generate_public_key(prime_p :: integer, prime_g :: integer, private_key :: integer) ::
           integer
-  def generate_public_key(prime_p, prime_g, private_key) do
-  end
+  def generate_public_key(prime_p, prime_g, private_key),
+    do: :crypto.mod_pow(prime_g, private_key, prime_p) |> :binary.decode_unsigned()
 
   @doc """
   Given a prime integer `prime_p`, user B's public key, and user A's private key,
@@ -60,6 +63,6 @@ defmodule DiffieHellman do
           public_key_b :: integer,
           private_key_a :: integer
         ) :: integer
-  def generate_shared_secret(prime_p, public_key_b, private_key_a) do
-  end
+  def generate_shared_secret(prime_p, public_key_b, private_key_a),
+    do: :crypto.mod_pow(public_key_b, private_key_a, prime_p) |> :binary.decode_unsigned()
 end
