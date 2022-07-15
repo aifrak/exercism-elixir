@@ -8,7 +8,6 @@ defmodule Dominoes do
   @spec chain?(dominoes :: [domino]) :: boolean
   def chain?([]), do: true
   def chain?([{a, a}]), do: true
-  def chain?([{_, _}]), do: false
 
   def chain?(dominoes), do: do_chain?(dominoes, MapSet.new(), [])
 
@@ -18,7 +17,7 @@ defmodule Dominoes do
   defp do_chain?([{h1, h2} = h | t] = all, halves, solos) do
     cond do
       Enum.empty?(halves) or h1 in halves or h2 in halves ->
-        do_chain?(t, MapSet.union(halves, MapSet.new([h1, h2])), Enum.reject(solos, & &1))
+        do_chain?(t, MapSet.union(halves, MapSet.new([h1, h2])), List.delete(solos, h))
 
       all == solos ->
         false
