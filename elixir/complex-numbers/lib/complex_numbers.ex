@@ -87,7 +87,13 @@ defmodule ComplexNumbers do
   Exponential of a complex number
   """
   @spec exp(a :: complex) :: complex
-  def exp(a), do: {:math.exp(do_real(a)) * euler(do_imaginary(a)), 0.0}
+  def exp(a) do
+    ra = do_real(a)
+    ia = do_imaginary(a)
 
-  defp euler(imaginary), do: :math.cos(imaginary) + :math.sin(imaginary)
+    rx = :math.exp(ra) * :math.cos(ia)
+    ix = :math.exp(ra) * :math.sin(ia)
+
+    {rx, ix}
+  end
 end
