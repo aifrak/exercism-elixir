@@ -4,7 +4,7 @@ defmodule RnaTranscription do
 
   ## Examples
 
-  iex> RNATranscription.to_rna('ACTG')
+  iex> RnaTranscription.to_rna('ACTG')
   'UGAC'
   """
   @spec to_rna([char]) :: [char]
@@ -12,7 +12,6 @@ defmodule RnaTranscription do
     Enum.map(dna, &covert_char/1)
   end
 
-  @spec covert_char(char) :: char
   defp covert_char(char) do
     case char do
       ?G -> ?C
