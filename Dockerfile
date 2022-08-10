@@ -73,6 +73,9 @@ USER root
 # Add shfmt
 COPY --from=shfmt --chown=root /bin/shfmt /usr/local/bin/
 
+# Add hadolint
+COPY --from=hadolint --chown=root /bin/hadolint /usr/local/bin/
+
 # Add erlang and elixir
 COPY --from=elixir --chown=root /usr/local/bin /usr/local/bin
 COPY --from=elixir --chown=root /usr/local/lib /usr/local/lib
