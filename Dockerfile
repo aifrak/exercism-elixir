@@ -56,6 +56,7 @@ CMD [ "bash" ]
 # —————————————————————————————————————————————— #
 
 FROM mvdan/shfmt:v3.4.3 as shfmt
+FROM hadolint/hadolint:v2.10.0 as hadolint
 FROM hexpm/elixir:1.13.4-erlang-24.3.4.1-ubuntu-focal-20211006 as elixir
 # Install hex and rebar
 RUN set -e \
