@@ -17,7 +17,7 @@ Map.fetch!(%{a: 1}, :b)
 # => raises KeyError
 ```
 
-## Try Rescue
+## Try/Rescue
 
 Elixir provides a construct for rescuing from errors using `try .. rescue`
 
