@@ -11,12 +11,15 @@ defmodule RunLengthEncoder do
   @spec encode(String.t()) :: String.t()
   def encode(string) do
     string
-    |> open()
-    |> IO.binstream(1)
-    |> Stream.chunk_while([], &chunk_encode/2, &after_encode/1)
-    |> Stream.flat_map(& &1)
-    |> Stream.map(&encode_length/1)
-    |> Enum.join()
+    |> StringIO.open(fn pid ->
+      pid
+      |> IO.binstream(1)
+      |> Stream.chunk_while([], &chunk_encode/2, &after_encode/1)
+      |> Stream.flat_map(& &1)
+      |> Stream.map(&encode_length/1)
+      |> Enum.join()
+    end)
+    |> elem(1)
   end
 
   defp encode_length({char, 1}), do: "#{char}"
@@ -31,12 +34,15 @@ defmodule RunLengthEncoder do
   @spec decode(String.t()) :: String.t()
   def decode(string) do
     string
-    |> open()
-    |> IO.binstream(1)
-    |> Stream.chunk_while(%{curr_count: '', counts: []}, &chunk_decode/2, &after_decode/1)
-    |> Stream.flat_map(& &1)
-    |> Stream.map(&decode_length/1)
-    |> Enum.join()
+    |> StringIO.open(fn pid ->
+      pid
+      |> IO.binstream(1)
+      |> Stream.chunk_while(%{curr_count: '', counts: []}, &chunk_decode/2, &after_decode/1)
+      |> Stream.flat_map(& &1)
+      |> Stream.map(&decode_length/1)
+      |> Enum.join()
+    end)
+    |> elem(1)
   end
 
   defp decode_length({char, count}), do: String.duplicate(char, count)
@@ -54,9 +60,4 @@ defmodule RunLengthEncoder do
 
   defp decode_count(''), do: @count_start
   defp decode_count(curr_count), do: curr_count |> Enum.reverse() |> List.to_integer()
-
-  defp open(str) do
-    {:ok, pid} = StringIO.open(str)
-    pid
-  end
 end
