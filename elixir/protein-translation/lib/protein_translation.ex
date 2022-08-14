@@ -28,16 +28,14 @@ defmodule ProteinTranslation do
   @spec of_rna(String.t()) :: {:ok, list(String.t())} | {:error, String.t()}
   def of_rna(rna) do
     rna
-    |> open()
-    |> IO.binstream(@codon_length)
-    |> Stream.chunk_while([], &chunk_codon/2, &after_chunk_codon/1)
-    |> Enum.to_list()
-    |> List.first()
-  end
-
-  defp open(str) do
-    {:ok, pid} = StringIO.open(str)
-    pid
+    |> StringIO.open(fn pid ->
+      pid
+      |> IO.binstream(@codon_length)
+      |> Stream.chunk_while([], &chunk_codon/2, &after_chunk_codon/1)
+      |> Enum.to_list()
+      |> List.first()
+    end)
+    |> elem(1)
   end
 
   defp chunk_codon(codon, acc) do
