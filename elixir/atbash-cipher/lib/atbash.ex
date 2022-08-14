@@ -19,23 +19,29 @@ defmodule Atbash do
   @spec encode(String.t()) :: String.t()
   def encode(plaintext) do
     plaintext
-    |> open()
-    |> IO.binstream(1)
-    |> Stream.map(&String.downcase/1)
-    |> Stream.map(&convert/1)
-    |> Stream.reject(&(&1 == nil))
-    |> Stream.chunk_every(@group_size)
-    |> Enum.join(@cipher_separator)
+    |> StringIO.open(fn pid ->
+      pid
+      |> IO.binstream(1)
+      |> Stream.map(&String.downcase/1)
+      |> Stream.map(&convert/1)
+      |> Stream.reject(&(&1 == nil))
+      |> Stream.chunk_every(@group_size)
+      |> Enum.join(@cipher_separator)
+    end)
+    |> elem(1)
   end
 
   @spec decode(String.t()) :: String.t()
   def decode(cipher) do
     cipher
-    |> open()
-    |> IO.binstream(1)
-    |> Stream.map(&convert/1)
-    |> Stream.reject(&(&1 == nil))
-    |> Enum.join()
+    |> StringIO.open(fn pid ->
+      pid
+      |> IO.binstream(1)
+      |> Stream.map(&convert/1)
+      |> Stream.reject(&(&1 == nil))
+      |> Enum.join()
+    end)
+    |> elem(1)
   end
 
   defp convert(char) do
@@ -44,10 +50,5 @@ defmodule Atbash do
       char in @plain -> @atbash[char]
       true -> nil
     end
-  end
-
-  defp open(str) do
-    {:ok, pid} = StringIO.open(str)
-    pid
   end
 end
