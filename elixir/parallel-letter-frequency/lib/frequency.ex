@@ -14,14 +14,15 @@ defmodule Frequency do
   end
 
   defp frequency(text) do
-    {:ok, pid} = StringIO.open(text)
-
-    pid
-    |> IO.stream(1)
-    |> Stream.map(&String.downcase/1)
-    |> Stream.filter(&letter?/1)
-    |> Enum.frequencies()
-    |> tap(fn _ -> StringIO.close(pid) end)
+    text
+    |> StringIO.open(fn pid ->
+      pid
+      |> IO.stream(1)
+      |> Stream.map(&String.downcase/1)
+      |> Stream.filter(&letter?/1)
+      |> Enum.frequencies()
+    end)
+    |> elem(1)
   end
 
   defp sum_frequencies(f1, f2), do: Map.merge(f1, f2, fn _, v1, v2 -> v1 + v2 end)
