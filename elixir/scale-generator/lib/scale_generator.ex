@@ -1,4 +1,9 @@
 defmodule ScaleGenerator do
+  @sharps ~w(A A# B C C# D D# E F F# G G#)
+  @flats ~w(A Bb B C Db D Eb E F Gb G Ab)
+  @tonics_for_flat ~w(F Bb Eb Ab Db Gb d g c f bb eb)
+  @steps %{"m" => 1, "M" => 2, "A" => 3}
+
   @doc """
   Find the note for a given interval (`step`) in a `scale` after the `tonic`.
 
@@ -15,8 +20,8 @@ defmodule ScaleGenerator do
   """
   @spec step(scale :: list(String.t()), tonic :: String.t(), step :: String.t()) ::
           list(String.t())
-  def step(scale, tonic, step) do
-  end
+  def step(scale, tonic, step),
+    do: scale |> Enum.find_index(&(&1 == tonic)) |> then(&Enum.at(scale, &1 + @steps[step]))
 
   @doc """
   The chromatic scale is a musical scale with thirteen pitches, each a semitone
@@ -33,8 +38,7 @@ defmodule ScaleGenerator do
   "C" should generate: ~w(C C# D D# E F F# G G# A A# B C)
   """
   @spec chromatic_scale(tonic :: String.t()) :: list(String.t())
-  def chromatic_scale(tonic \\ "C") do
-  end
+  def chromatic_scale(tonic \\ "C"), do: shift(@sharps, tonic)
 
   @doc """
   Sharp notes can also be considered the flat (b) note of the tone above them,
@@ -49,8 +53,7 @@ defmodule ScaleGenerator do
   "C" should generate: ~w(C Db D Eb E F Gb G Ab A Bb B C)
   """
   @spec flat_chromatic_scale(tonic :: String.t()) :: list(String.t())
-  def flat_chromatic_scale(tonic \\ "C") do
-  end
+  def flat_chromatic_scale(tonic \\ "C"), do: shift(@flats, tonic)
 
   @doc """
   Certain scales will require the use of the flat version, depending on the
@@ -63,8 +66,8 @@ defmodule ScaleGenerator do
   For all others, use the regular chromatic scale.
   """
   @spec find_chromatic_scale(tonic :: String.t()) :: list(String.t())
-  def find_chromatic_scale(tonic) do
-  end
+  def find_chromatic_scale(tonic) when tonic in @tonics_for_flat, do: flat_chromatic_scale(tonic)
+  def find_chromatic_scale(tonic), do: chromatic_scale(tonic)
 
   @doc """
   The `pattern` string will let you know how many steps to make for the next
@@ -79,5 +82,32 @@ defmodule ScaleGenerator do
   """
   @spec scale(tonic :: String.t(), pattern :: String.t()) :: list(String.t())
   def scale(tonic, pattern) do
+    scale_type = find_scale_type(tonic)
+    tonic = upcase(tonic)
+
+    pattern
+    |> String.graphemes()
+    |> Enum.map_reduce(tonic, fn step, prev_tonic ->
+      prev_tonic |> find_scale(scale_type) |> step(prev_tonic, step) |> then(&{&1, &1})
+    end)
+    |> then(&[tonic | elem(&1, 0)])
   end
+
+  defp find_scale(tonic, :sharps), do: chromatic_scale(tonic)
+  defp find_scale(tonic, :flats), do: flat_chromatic_scale(tonic)
+
+  defp find_scale_type(tonic) when tonic in @tonics_for_flat, do: :flats
+  defp find_scale_type(_), do: :sharps
+
+  defp shift(scale, tonic) do
+    tonic = upcase(tonic)
+    tonic_index = Enum.find_index(scale, &(&1 == tonic))
+
+    scale
+    |> then(&Enum.slide(&1, tonic_index..length(&1), 0))
+    |> then(&(&1 ++ [tonic]))
+  end
+
+  defp upcase(<<note::utf8, symbol::bitstring>>), do: String.upcase(<<note>>) <> symbol
+  defp upcase(<<note::utf8>>), do: String.upcase(<<note>>)
 end
