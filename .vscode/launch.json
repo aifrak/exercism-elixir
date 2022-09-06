@@ -1,0 +1,45 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "mix_task",
+      "name": "mix test",
+      "request": "launch",
+      "task": "test",
+      "taskArgs": [
+        "--include" ,"pending"
+      ],
+      "startApps": false,
+      "projectDir": "${workspaceRoot}${config:elixirLS.projectDir}",
+      "requireFiles": [
+        "test/**/test_helper.exs",
+        "test/**/*_test.exs"
+      ]
+    },
+    {
+      "type": "mix_task",
+      "name": "mix test (single)",
+      "request": "launch",
+      "task": "test",
+      "taskArgs": [
+        "--only", "test:test ${input:promptTestName}"
+      ],
+      "startApps": false,
+      "projectDir": "${workspaceRoot}${config:elixirLS.projectDir}",
+      "requireFiles": [
+        "test/**/test_helper.exs",
+        "test/**/*_test.exs"
+      ]
+    },
+  ],
+  "inputs": [
+    {
+      "id": "promptTestName",
+      "type": "promptString",
+      "description": "Name of your test.",
+    }
+  ]
+}
