@@ -2,7 +2,7 @@
 #                      base                      #
 # —————————————————————————————————————————————— #
 
-FROM ubuntu:focal-20220426 as base
+FROM ubuntu:jammy-20220815 as base
 
 USER root
 
@@ -13,11 +13,11 @@ RUN set -e \
   && echo "--- Install packages ---" \
   && apt-get update -qq \
   && apt-get install -y -qq --no-install-recommends \
-    git=1:2.25.1-* \
-    libodbc1=2.3.6-* \
-    libssl1.1=1.1.1f-* \
-    libsctp1=1.0.18+* \
-    locales=2.31-* \
+    git=1:2.34.1-* \
+    libodbc1=2.3.9-* \
+    libssl3=3.0.2-* \
+    libsctp1=1.0.19+* \
+    locales=2.35-* \
   && echo "--- Add locales ---" \
   && sed -i "/en_US.UTF-8/s/^# //g" /etc/locale.gen \
   && locale-gen "en_US.UTF-8" \
@@ -57,7 +57,7 @@ CMD [ "bash" ]
 
 FROM mvdan/shfmt:v3.4.3 as shfmt
 FROM hadolint/hadolint:v2.10.0 as hadolint
-FROM hexpm/elixir:1.13.4-erlang-24.3.4.1-ubuntu-focal-20211006 as elixir
+FROM hexpm/elixir:1.14.0-erlang-25.0.4-ubuntu-jammy-20220428 as elixir
 # Install hex and rebar
 RUN set -e \
   && mix local.hex --force \
