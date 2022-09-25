@@ -18,17 +18,17 @@ defmodule RobotSimulator do
   def create(direction \\ :north, position \\ {0, 0})
 
   def create(direction, position) do
-    with :ok <- valid_direction(direction),
-         :ok <- valid_position(position) do
+    with :ok <- validate_direction(direction),
+         :ok <- validate_position(position) do
       %{direction: direction, position: position}
     end
   end
 
-  defp valid_direction(direction) when direction in @directions, do: :ok
-  defp valid_direction(_), do: {:error, "invalid direction"}
+  defp validate_direction(direction) when direction in @directions, do: :ok
+  defp validate_direction(_), do: {:error, "invalid direction"}
 
-  defp valid_position({x, y}) when is_integer(x) and is_integer(y), do: :ok
-  defp valid_position(_), do: {:error, "invalid position"}
+  defp validate_position({x, y}) when is_integer(x) and is_integer(y), do: :ok
+  defp validate_position(_), do: {:error, "invalid position"}
 
   @doc """
   Simulate the robot's movement given a string of instructions.
