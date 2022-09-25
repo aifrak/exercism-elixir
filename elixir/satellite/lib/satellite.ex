@@ -9,8 +9,6 @@ defmodule Satellite do
   """
   @spec build_tree(preorder :: [any], inorder :: [any]) :: {:ok, tree} | {:error, String.t()}
 
-  def build_tree([], []), do: {:ok, {}}
-
   def build_tree(preorder, inorder) do
     with :ok <- validate_lengths(preorder, inorder),
          :ok <- validate_same_items(preorder, inorder),
