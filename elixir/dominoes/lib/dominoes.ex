@@ -19,7 +19,7 @@ defmodule Dominoes do
       Enum.empty?(halves) or h1 in halves or h2 in halves ->
         do_chain?(t, MapSet.union(halves, MapSet.new([h1, h2])), List.delete(solos, h))
 
-      all == solos ->
+      Enum.sort(all) == Enum.sort(solos) ->
         false
 
       true ->
