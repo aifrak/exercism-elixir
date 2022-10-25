@@ -1,6 +1,12 @@
 {
   "editor.rulers": [80],
+  // Shellformat:
+  "shellformat.useEditorConfig": true,
+  // Override languages:
+  "[dockerfile]": {
+    "editor.defaultFormatter": "foxundermoon.shell-format"
+  },
   "[elixir]": {
     "editor.rulers": [98]
-  }
+  },
 }
