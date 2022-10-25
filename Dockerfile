@@ -111,10 +111,10 @@ RUN set -e \
   && rm -rf /var/lib/apt/lists/*
 
 # Add exercism cli
-RUN EXERCISM_VERSION="3.0.13" \
+RUN EXERCISM_VERSION="3.1.0" \
   && TARGET_DIR="/usr/local/bin" \
   && ARCHIVE_NAME="exercism.tgz" \
-  && EXERCISM_DOWNLOAD_SHA256="8abcd78d9fbf9c580381e86e611f50a0d5efd88aed06100cd1e4d12ee41440d2" \
+  && EXERCISM_DOWNLOAD_SHA256="97ba90d7d83a9e8de57066be4d42319c33165a355c7072f535ba37c00aedf432" \
   && wget -nv -O ${ARCHIVE_NAME} https://github.com/exercism/cli/releases/download/v${EXERCISM_VERSION}/exercism-${EXERCISM_VERSION}-linux-x86_64.tar.gz \
   && echo "$EXERCISM_DOWNLOAD_SHA256 ${ARCHIVE_NAME}" | sha256sum -c - \
   && mkdir -p ${TARGET_DIR} \
