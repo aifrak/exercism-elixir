@@ -5,7 +5,7 @@ defmodule Rectangles do
   @spec count(input :: String.t()) :: integer
   def count(input) do
     parsed = String.split(input, "\n")
-    parsed |> vertex_columns() |> then(&do_count(parsed, &1))
+    do_count(parsed, vertex_columns(parsed))
   end
 
   defp do_count(parsed, columns) do
