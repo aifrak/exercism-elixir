@@ -6,27 +6,27 @@ defmodule Dot do
   defp read_ast({:__block__, _, _} = ast, graph), do: {ast, graph}
 
   defp read_ast({:graph, _, [attrs]}, graph) when is_list(attrs) do
-    if Keyword.keyword?(attrs),
-      do: {nil, Graph.put_attrs(graph, attrs)},
-      else: raise(ArgumentError)
+    validate_attributes(attrs)
+    {nil, Graph.put_attrs(graph, attrs)}
   end
 
   defp read_ast({:--, _, [{from, _, _}, {to, _, nil}]}, graph),
     do: {nil, Graph.add_edge(graph, from, to)}
 
   defp read_ast({:--, _, [{from, _, _}, {to, _, [attrs]}]}, graph) when is_list(attrs) do
-    if Keyword.keyword?(attrs),
-      do: {nil, Graph.add_edge(graph, from, to, attrs)},
-      else: raise(ArgumentError)
+    validate_attributes(attrs)
+    {nil, Graph.add_edge(graph, from, to, attrs)}
   end
 
   defp read_ast({marker, _, nil}, graph), do: {nil, Graph.add_node(graph, marker)}
 
   defp read_ast({marker, _, [attrs]}, graph) when is_list(attrs) do
-    if Keyword.keyword?(attrs),
-      do: {nil, Graph.add_node(graph, marker, attrs)},
-      else: raise(ArgumentError)
+    validate_attributes(attrs)
+    {nil, Graph.add_node(graph, marker, attrs)}
   end
 
   defp read_ast(_, _), do: raise(ArgumentError)
+
+  defp validate_attributes(attrs),
+    do: if(Keyword.keyword?(attrs), do: :ok, else: raise(ArgumentError))
 end
