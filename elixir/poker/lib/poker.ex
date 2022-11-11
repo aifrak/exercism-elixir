@@ -1,9 +1,10 @@
 defmodule Poker do
-  @ace_low 1
-
   @ranks ["2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"]
          |> Enum.with_index(2)
          |> Map.new()
+
+  @ace_high @ranks["A"]
+  @ace_low 1
 
   @hands [
            :high_card,
@@ -64,7 +65,7 @@ defmodule Poker do
   defp parsed_hand(hand) do
     hand
     |> Enum.map(&parse_card/1)
-    |> Enum.group_by(fn {rank, _, _} -> rank end)
+    |> Enum.group_by(fn {rank, _} -> rank end)
     |> Enum.group_by(fn {_, cards} -> Enum.count(cards) end, fn {_, cards} -> cards end)
     |> Enum.sort(fn {count_1, _}, {count_2, _} -> count_1 > count_2 end)
     |> Enum.flat_map(fn {_, cards} ->
@@ -78,24 +79,24 @@ defmodule Poker do
   defp parse_card(str) do
     ~r/(?<rank>[2-9]|10|[JQKA])(?<suit>[CDHS])/
     |> Regex.named_captures(str)
-    |> then(fn %{"rank" => rank, "suit" => suit} -> {rank, suit, @ranks[rank]} end)
+    |> then(fn %{"rank" => rank, "suit" => suit} -> {@ranks[rank], suit} end)
   end
 
-  defp best_rank([{_, s, p1}, {_, s, p2}, {_, s, p3}, {_, s, p4}, {_, s, p5}])
-       when is_sequential(p1, p2, p3, p4, p5),
+  defp best_rank([{r1, s}, {r2, s}, {r3, s}, {r4, s}, {r5, s}])
+       when is_sequential(r1, r2, r3, r4, r5),
        do: :straight_flush
 
-  defp best_rank([{r1, _, _}, {r1, _, _}, {r1, _, _}, {r1, _, _}, _]), do: :four_of_a_kind
-  defp best_rank([{r1, _, _}, {r1, _, _}, {r1, _, _}, {r2, _, _}, {r2, _, _}]), do: :full_house
+  defp best_rank([{r1, _}, {r1, _}, {r1, _}, {r1, _}, _]), do: :four_of_a_kind
+  defp best_rank([{r1, _}, {r1, _}, {r1, _}, {r2, _}, {r2, _}]), do: :full_house
 
-  defp best_rank([{_, _, p1}, {_, _, p2}, {_, _, p3}, {_, _, p4}, {_, _, p5}])
-       when is_sequential(p1, p2, p3, p4, p5),
+  defp best_rank([{r1, _}, {r2, _}, {r3, _}, {r4, _}, {r5, _}])
+       when is_sequential(r1, r2, r3, r4, r5),
        do: :straight
 
-  defp best_rank([{_, s, _}, {_, s, _}, {_, s, _}, {_, s, _}, {_, s, _}]), do: :flush
-  defp best_rank([{r1, _, _}, {r1, _, _}, {r1, _, _}, _, _]), do: :three_of_a_kind
-  defp best_rank([{r1, _, _}, {r1, _, _}, {r2, _, _}, {r2, _, _}, _]), do: :two_pair
-  defp best_rank([{r1, _, _}, {r1, _, _}, _, _, _]), do: :one_pair
+  defp best_rank([{_, s}, {_, s}, {_, s}, {_, s}, {_, s}]), do: :flush
+  defp best_rank([{r1, _}, {r1, _}, {r1, _}, _, _]), do: :three_of_a_kind
+  defp best_rank([{r1, _}, {r1, _}, {r2, _}, {r2, _}, _]), do: :two_pair
+  defp best_rank([{r1, _}, {r1, _}, _, _, _]), do: :one_pair
   defp best_rank(_), do: :high_card
 
   defp compare_hand(%{rank: {_, rp1}} = h1, %{rank: {_, rp2}} = h2) do
@@ -108,24 +109,21 @@ defmodule Poker do
 
   defp compare_cards([], []), do: :eq
 
-  defp compare_cards([{_, _, p1} | tl1], [{_, _, p2} | tl2]) do
+  defp compare_cards([{r1, _} | tl1], [{r2, _} | tl2]) do
     cond do
-      p1 > p2 -> :gt
-      p1 < p2 -> :lt
+      r1 > r2 -> :gt
+      r1 < r2 -> :lt
       true -> compare_cards(tl1, tl2)
     end
   end
 
-  defp may_slide_ace_to_low([
-         {"A", s, _} | [{"5", _, _}, {"4", _, _}, {"3", _, _}, {"2", _, _}] = rest
-       ]) do
-    rest ++ [{"A", s, @ace_low}]
-  end
+  defp may_slide_ace_to_low([{@ace_high, s} | [{5, _}, {4, _}, {3, _}, {2, _}] = rest]),
+    do: rest ++ [{@ace_low, s}]
 
   defp may_slide_ace_to_low(hand), do: hand
 
   defp same_hand_rank?(%{rank: {r1, _}, cards: c1}, %{rank: {r2, _}, cards: c2}),
     do: r1 == r2 and compare_cards(c1, c2) == :eq
 
-  defp point({_, _, point}), do: point
+  defp point({rank, _}), do: rank
 end
