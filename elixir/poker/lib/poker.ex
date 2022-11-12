@@ -84,25 +84,25 @@ defmodule Poker do
 
   defp best_rank([{r1, s}, {r2, s}, {r3, s}, {r4, s}, {r5, s}])
        when is_sequential(r1, r2, r3, r4, r5),
-       do: :straight_flush
+       do: @hands[:straight_flush]
 
-  defp best_rank([{r1, _}, {r1, _}, {r1, _}, {r1, _}, _]), do: :four_of_a_kind
-  defp best_rank([{r1, _}, {r1, _}, {r1, _}, {r2, _}, {r2, _}]), do: :full_house
+  defp best_rank([{r1, _}, {r1, _}, {r1, _}, {r1, _}, _]), do: @hands[:four_of_a_kind]
+  defp best_rank([{r1, _}, {r1, _}, {r1, _}, {r2, _}, {r2, _}]), do: @hands[:full_house]
 
   defp best_rank([{r1, _}, {r2, _}, {r3, _}, {r4, _}, {r5, _}])
        when is_sequential(r1, r2, r3, r4, r5),
-       do: :straight
+       do: @hands[:straight]
 
-  defp best_rank([{_, s}, {_, s}, {_, s}, {_, s}, {_, s}]), do: :flush
-  defp best_rank([{r1, _}, {r1, _}, {r1, _}, _, _]), do: :three_of_a_kind
-  defp best_rank([{r1, _}, {r1, _}, {r2, _}, {r2, _}, _]), do: :two_pair
-  defp best_rank([{r1, _}, {r1, _}, _, _, _]), do: :one_pair
-  defp best_rank(_), do: :high_card
+  defp best_rank([{_, s}, {_, s}, {_, s}, {_, s}, {_, s}]), do: @hands[:flush]
+  defp best_rank([{r1, _}, {r1, _}, {r1, _}, _, _]), do: @hands[:three_of_a_kind]
+  defp best_rank([{r1, _}, {r1, _}, {r2, _}, {r2, _}, _]), do: @hands[:two_pair]
+  defp best_rank([{r1, _}, {r1, _}, _, _, _]), do: @hands[:one_pair]
+  defp best_rank(_), do: @hands[:high_card]
 
-  defp compare_hand(%{rank: {_, rp1}} = h1, %{rank: {_, rp2}} = h2) do
+  defp compare_hand(%{rank: r1} = h1, %{rank: r2} = h2) do
     cond do
-      rp1 > rp2 -> :gt
-      rp1 < rp2 -> :lt
+      r1 > r2 -> :gt
+      r1 < r2 -> :lt
       true -> compare_cards(h1.cards, h2.cards)
     end
   end
@@ -122,7 +122,7 @@ defmodule Poker do
 
   defp may_slide_ace_to_low(hand), do: hand
 
-  defp same_hand_rank?(%{rank: {r1, _}, cards: c1}, %{rank: {r2, _}, cards: c2}),
+  defp same_hand_rank?(%{rank: r1, cards: c1}, %{rank: r2, cards: c2}),
     do: r1 == r2 and compare_cards(c1, c2) == :eq
 
   defp point({rank, _}), do: rank
