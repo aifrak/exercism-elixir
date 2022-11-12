@@ -55,12 +55,12 @@ defmodule Poker do
   def best_hand(hands) do
     [best_hand | _] =
       parsed_hands =
-      hands |> Enum.map(&parsed_hand/1) |> Enum.sort(fn a, b -> compare_hand(a, b) != :lt end)
+      hands |> Enum.map(&parsed_hand/1) |> Enum.sort_by(&{&1.rank, &1.cards}, :desc)
 
-    parsed_hands
-    |> Enum.take_while(&same_hand_rank?(&1, best_hand))
-    |> Enum.map(& &1.hand)
+    parsed_hands |> Enum.take_while(&same_hand_rank?(&1, best_hand)) |> Enum.map(& &1.hand)
   end
+
+  defp same_hand_rank?(h1, h2), do: h1.rank == h2.rank and h1.cards == h2.cards
 
   defp parsed_hand(hand) do
     hand
@@ -69,12 +69,15 @@ defmodule Poker do
     |> Enum.group_by(fn {_, cards} -> Enum.count(cards) end, fn {_, cards} -> cards end)
     |> Enum.sort(fn {count_1, _}, {count_2, _} -> count_1 > count_2 end)
     |> Enum.flat_map(fn {_, cards} ->
-      cards |> List.flatten() |> Enum.sort_by(&point/1, :desc) |> may_slide_ace_to_low()
+      cards |> List.flatten() |> List.keysort(0, :desc) |> may_slide_ace_to_low()
     end)
-    |> then(
-      &%{hand: hand, cards: &1, rank: &1 |> best_rank() |> then(fn br -> {br, @hands[br]} end)}
-    )
+    |> then(&%{hand: hand, cards: Enum.map(&1, fn {r, _} -> r end), rank: best_rank(&1)})
   end
+
+  defp may_slide_ace_to_low([{@ace_high, s} | [{5, _}, {4, _}, {3, _}, {2, _}] = rest]),
+    do: rest ++ [{@ace_low, s}]
+
+  defp may_slide_ace_to_low(hand), do: hand
 
   defp parse_card(str) do
     ~r/(?<rank>[2-9]|10|[JQKA])(?<suit>[CDHS])/
@@ -98,32 +101,4 @@ defmodule Poker do
   defp best_rank([{r1, _}, {r1, _}, {r2, _}, {r2, _}, _]), do: @hands[:two_pair]
   defp best_rank([{r1, _}, {r1, _}, _, _, _]), do: @hands[:one_pair]
   defp best_rank(_), do: @hands[:high_card]
-
-  defp compare_hand(%{rank: r1} = h1, %{rank: r2} = h2) do
-    cond do
-      r1 > r2 -> :gt
-      r1 < r2 -> :lt
-      true -> compare_cards(h1.cards, h2.cards)
-    end
-  end
-
-  defp compare_cards([], []), do: :eq
-
-  defp compare_cards([{r1, _} | tl1], [{r2, _} | tl2]) do
-    cond do
-      r1 > r2 -> :gt
-      r1 < r2 -> :lt
-      true -> compare_cards(tl1, tl2)
-    end
-  end
-
-  defp may_slide_ace_to_low([{@ace_high, s} | [{5, _}, {4, _}, {3, _}, {2, _}] = rest]),
-    do: rest ++ [{@ace_low, s}]
-
-  defp may_slide_ace_to_low(hand), do: hand
-
-  defp same_hand_rank?(%{rank: r1, cards: c1}, %{rank: r2, cards: c2}),
-    do: r1 == r2 and compare_cards(c1, c2) == :eq
-
-  defp point({rank, _}), do: rank
 end
