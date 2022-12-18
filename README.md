@@ -7,4 +7,4 @@ All solutions are also available on
 
 [Exercism Profile](https://exercism.org/profiles/aifrak)
 
-Exercices done: 157/157 (12/2022)
+Completed exercices: 157/157 (December 2022)
