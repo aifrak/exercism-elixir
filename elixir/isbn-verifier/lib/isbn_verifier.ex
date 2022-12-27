@@ -16,14 +16,9 @@ defmodule IsbnVerifier do
   """
   @spec isbn?(String.t()) :: boolean
   def isbn?(isbn) do
-    isbn = String.replace(isbn, @separator, "")
-
-    if valid_format?(isbn) do
-      isbn
-      |> checksum()
-      |> valid_checksum?()
-    else
-      false
+    with isbn <- String.replace(isbn, @separator, ""),
+         true <- valid_format?(isbn) do
+      isbn |> checksum() |> valid_checksum?()
     end
   end
 
@@ -36,10 +31,9 @@ defmodule IsbnVerifier do
   end
 
   defp valid_checksum?(checksum), do: rem(checksum, 11) == 0
-  defp valid_format?(isbn), do: String.length(isbn) == @length && all_valid_chars?(isbn)
 
-  defp all_valid_chars?(isbn), do: not any_invalid_chars?(isbn)
-  defp any_invalid_chars?(isbn), do: Regex.match?(~r/[^0-9X]/, isbn)
+  defp valid_format?(isbn),
+    do: String.length(isbn) == @length and Regex.match?(~r/^[0-9]{1,9}[0-9X]$/, isbn)
 
   defp char_to_value(char) when char in ?0..?9, do: String.to_integer(<<char>>)
   defp char_to_value(?X), do: 10
