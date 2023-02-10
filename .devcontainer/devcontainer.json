@@ -7,38 +7,42 @@
   ],
   "service": "app",
   "workspaceFolder": "/app",
-  "settings": {
-    "shellformat.path": "/usr/local/bin/shfmt",
-    // "languagesMap" is set here instead of settings.json because of a bug
-    // https://github.com/stackbreak/comment-divider/issues/35
-    "comment-divider.languagesMap": {
-      "elixir": ["#", "#"]
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "shellformat.path": "/usr/local/bin/shfmt",
+        // "languagesMap" is set here instead of settings.json because of a bug
+        // https://github.com/stackbreak/comment-divider/issues/35
+        "comment-divider.languagesMap": {
+          "elixir": ["#", "#"]
+        }
+      },
+      "extensions": [
+        // Elixir
+        "jakebecker.elixir-ls",
+
+        // EditorConfig
+        "editorconfig.editorconfig",
+
+        // Git:
+        "eamodio.gitlens",
+
+        // Github Actions
+        "cschleiden.vscode-github-actions",
+
+        // Gitignore
+        "codezombiech.gitignore",
+
+        // Docker
+        "ms-azuretools.vscode-docker",
+
+        // Shell
+        "foxundermoon.shell-format",
+
+        // Comments
+        "stackbreak.comment-divider",
+        "exodiusstudios.comment-anchors"
+      ]
     }
-  },
-  "extensions": [
-    // Elixir
-    "jakebecker.elixir-ls",
-
-    // EditorConfig
-    "editorconfig.editorconfig",
-
-    // Git:
-    "eamodio.gitlens",
-
-    // Github Actions
-    "cschleiden.vscode-github-actions",
-
-    // Gitignore
-    "codezombiech.gitignore",
-
-    // Docker
-    "ms-azuretools.vscode-docker",
-
-    // Shell
-    "foxundermoon.shell-format",
-
-    // Comments
-    "stackbreak.comment-divider",
-    "exodiusstudios.comment-anchors"
-  ]
+  }
 }
