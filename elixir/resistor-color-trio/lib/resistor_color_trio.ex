@@ -12,20 +12,33 @@ defmodule ResistorColorTrio do
     white: 9
   }
 
-  @kilo 1000
+  @units %{
+    ohms: 1,
+    kiloohms: 10 ** 3,
+    megaohms: 10 ** 6,
+    gigaohms: 10 ** 9
+  }
 
   @doc """
   Calculate the resistance value in ohm or kiloohm from resistor colors
   """
-  @spec label(colors :: [atom]) :: {number, :ohms | :kiloohms}
-  def label(colors), do: colors |> to_resistance() |> to_unit()
+  @spec label(colors :: [atom]) :: {number, :ohms | :kiloohms | :megaohms | :gigaohms}
+  def label(colors) do
+    resistance = to_resistance(colors)
+    resistance |> unit() |> then(&{convert_value(resistance, &1), &1})
+  end
 
-  defp to_resistance([c1, c2, c3]),
-    do: "#{decode(c1)}#{decode(c2)}#{pad_zeros(c3)}" |> String.to_integer()
+  defp to_resistance([c1, c2, c3 | _]),
+    do: String.to_integer("#{decode(c1)}#{decode(c2)}#{pad_zeros(c3)}")
 
   defp decode(color), do: @color_bands[color]
+
   defp pad_zeros(color), do: String.duplicate("0", @color_bands[color])
 
-  defp to_unit(resistance) when resistance >= @kilo, do: {round(resistance / @kilo), :kiloohms}
-  defp to_unit(resistance), do: {resistance, :ohms}
+  defp unit(resistance) when resistance >= @units.gigaohms, do: :gigaohms
+  defp unit(resistance) when resistance >= @units.megaohms, do: :megaohms
+  defp unit(resistance) when resistance >= @units.kiloohms, do: :kiloohms
+  defp unit(_), do: :ohms
+
+  defp convert_value(resistance, unit), do: resistance |> Kernel./(@units[unit]) |> round()
 end
