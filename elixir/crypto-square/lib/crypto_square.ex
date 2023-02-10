@@ -11,8 +11,12 @@ defmodule CryptoSquare do
 
   def encode(str) do
     message = normalize(str)
-    cols_nb = columns_number(message)
+    message |> columns_number() |> then(&do_encode(message, &1))
+  end
 
+  defp do_encode(_, 0), do: ""
+
+  defp do_encode(message, cols_nb) do
     message
     |> String.graphemes()
     |> Enum.chunk_every(cols_nb)
