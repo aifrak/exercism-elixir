@@ -28,12 +28,11 @@ defmodule ResistorColorTrio do
     resistance |> unit() |> then(&{convert_value(resistance, &1), &1})
   end
 
-  defp to_resistance([c1, c2, c3 | _]),
-    do: String.to_integer("#{decode(c1)}#{decode(c2)}#{pad_zeros(c3)}")
+  defp to_resistance([c1, c2, c3 | _]), do: Integer.undigits([decode(c1), decode(c2) | zeros(c3)])
 
   defp decode(color), do: @color_bands[color]
 
-  defp pad_zeros(color), do: String.duplicate("0", @color_bands[color])
+  defp zeros(color), do: List.duplicate(0, @color_bands[color])
 
   defp unit(resistance) when resistance >= @units.gigaohms, do: :gigaohms
   defp unit(resistance) when resistance >= @units.megaohms, do: :megaohms
