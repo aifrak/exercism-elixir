@@ -20,17 +20,15 @@ defmodule PalindromeProducts do
   defp palindromes(factors_range) do
     for x when Integer.is_odd(x) <- factors_range,
         y when Integer.is_odd(y) <- factors_range,
+        x <= y,
+        product = x * y,
+        palindrome?(product),
         reduce: %{} do
-      acc ->
-        product = x * y
-
-        if palindrome?(product),
-          do: add_palindrome(product, Enum.sort([x, y]), acc),
-          else: acc
+      acc -> add_palindrome(product, Enum.sort([x, y]), acc)
     end
   end
 
-  defp palindrome?(product), do: Integer.to_string(product) |> then(&(&1 == String.reverse(&1)))
+  defp palindrome?(product), do: Integer.digits(product) |> then(&(&1 == Enum.reverse(&1)))
 
   defp add_palindrome(product, factors, acc),
     do: Map.update(acc, product, MapSet.new([factors]), &MapSet.put(&1, factors))
