@@ -3,13 +3,17 @@ defmodule Form do
   A collection of loosely related functions helpful for filling out various forms at the city office.
   """
 
+  @type address_map() :: %{street: String.t(), postal_code: String.t(), city: String.t()}
+  @type address_tuple() :: {street :: String.t(), postal_code :: String.t(), city :: String.t()}
+  @type address() :: address_map() | address_tuple()
+
   @doc """
   Generates a string of a given length.
 
   This string can be used to fill out a form field that is supposed to have no value.
   Such fields cannot be left empty because a malicious third party could fill them out with false data.
   """
-  @spec blanks(non_neg_integer) :: String.t()
+  @spec blanks(non_neg_integer()) :: String.t()
   def blanks(n) do
     String.duplicate("X", n)
   end
@@ -33,7 +37,7 @@ defmodule Form do
   This is needed to check that the values of fields do not exceed the maximum allowed length.
   It also tells you by how much the value exceeds the maximum.
   """
-  @spec check_length(String.t(), non_neg_integer) :: :ok | {:error, pos_integer}
+  @spec check_length(String.t(), non_neg_integer()) :: :ok | {:error, pos_integer()}
   def check_length(word, length) do
     diff = String.length(word) - length
 
@@ -47,11 +51,7 @@ defmodule Form do
   @doc """
   Formats the address as an uppercase multiline string.
   """
-  @type address_map :: %{street: String.t(), postal_code: String.t(), city: String.t()}
-  @type address_tuple :: {street :: String.t(), postal_code :: String.t(), city :: String.t()}
-  @type address :: address_map | address_tuple
-  @spec format_address(address) :: String.t()
-
+  @spec format_address(address()) :: String.t()
   def format_address(%{street: street, postal_code: postal_code, city: city}) do
     format_address({street, postal_code, city})
   end
