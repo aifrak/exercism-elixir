@@ -1,6 +1,4 @@
 defmodule PalindromeProducts do
-  require Integer
-
   @doc """
   Generates all palindrome products from an optionally given min factor (or 1) to a given max factor.
   """
@@ -18,8 +16,8 @@ defmodule PalindromeProducts do
   end
 
   defp palindromes(factors_range) do
-    for x when Integer.is_odd(x) <- factors_range,
-        y when Integer.is_odd(y) <- factors_range,
+    for x <- factors_range,
+        y <- factors_range,
         x <= y,
         product = x * y,
         palindrome?(product),
