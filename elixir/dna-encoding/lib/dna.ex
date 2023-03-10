@@ -15,9 +15,21 @@ defmodule DNA do
 
   def decode_nucleotide(encoded_code), do: @codes[encoded_code]
 
-  def encode([]), do: <<>>
-  def encode([head | tail]), do: <<encode_nucleotide(head)::@code_size, encode(tail)::bitstring>>
+  def encode(dna), do: do_encode(dna)
 
-  def decode(<<>>), do: []
-  def decode(<<head::@code_size, tail::bitstring>>), do: [decode_nucleotide(head) | decode(tail)]
+  defp do_encode(dna, acc \\ <<>>)
+  defp do_encode([], acc), do: acc
+
+  defp do_encode([h | t], acc),
+    do: do_encode(t, <<acc::bits, encode_nucleotide(h)::@code_size>>)
+
+  def decode(dna), do: do_decode(dna)
+
+  defp do_decode(dna, acc \\ [])
+  defp do_decode(<<>>, acc), do: reverse(acc)
+  defp do_decode(<<h::@code_size, t::bits>>, acc), do: do_decode(t, [decode_nucleotide(h) | acc])
+
+  defp reverse(dna, acc \\ [])
+  defp reverse([], acc), do: acc
+  defp reverse([h | t], acc), do: reverse(t, [h | acc])
 end
