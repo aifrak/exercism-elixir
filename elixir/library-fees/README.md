@@ -6,24 +6,27 @@ If you get stuck on the exercise, check out `HINTS.md`, but try and solve it wit
 
 ## Introduction
 
-## Dates and time
+## Dates and Time
 
 Elixir's standard library offers 4 different modules for working with dates and time, each with its own struct.
 
 - The `Date` module. A `Date` struct can be created with the `~D` sigil.
-    ```elixir
-    ~D[2021-01-01]
-    ```
+
+  ```elixir
+  ~D[2021-01-01]
+  ```
 
 - The `Time` module. A `Time` struct can be created with the `~T` sigil.
-    ```elixir
-    ~T[12:00:00]
-    ```
+
+  ```elixir
+  ~T[12:00:00]
+  ```
 
 - The `NaiveDateTime` module for datetimes without a timezone. A `NaiveDateTime` struct can be created with the `~N` sigil.
-    ```elixir
-    ~N[2021-01-01 12:00:00]
-    ```
+
+  ```elixir
+  ~N[2021-01-01 12:00:00]
+  ```
 
 - The `DateTime` module for datetimes with a timezone. Using this module for timezones other than UTC requires an external dependency, a timezone database.
 
@@ -72,7 +75,7 @@ LibraryFees.return_date(~N[2020-11-28 15:55:33])
 
 The library has a flat rate for late returns. To be able to calculate the fee, we need to know how many days after the return date the book was actually returned.
 
-Implement the `LibraryFees.days_late/2` function. It should take a `Date` struct - the planned return datetime, and a `NaiveDateTime` struct - the actual return datetime.
+Implement the `LibraryFees.days_late/2` function. It should take a `Date` struct - the planned return date, and a `NaiveDateTime` struct - the actual return datetime.
 
 If the actual return date is on an earlier or the same day as the planned return datetime, the function should return 0. Otherwise, the function should return the difference between those two dates in days.
 
