@@ -21,25 +21,18 @@
     },
     {
       "type": "mix_task",
-      "name": "mix test (single)",
+      "name": "mix test (debug at cursor)",
       "request": "launch",
       "task": "test",
       "taskArgs": [
-        "--only", "test:test ${input:promptTestName}"
+        "${file}:${lineNumber}"
       ],
       "startApps": false,
-      "projectDir": "${workspaceRoot}${config:elixirLS.projectDir}",
+      "projectDir": "${workspaceFolder}${config:elixirLS.projectDir}",
       "requireFiles": [
         "test/**/test_helper.exs",
         "test/**/*_test.exs"
       ]
     },
-  ],
-  "inputs": [
-    {
-      "id": "promptTestName",
-      "type": "promptString",
-      "description": "Name of your test.",
-    }
   ]
 }
