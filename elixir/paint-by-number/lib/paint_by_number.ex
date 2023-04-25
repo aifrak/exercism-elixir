@@ -1,29 +1,35 @@
 defmodule PaintByNumber do
   def palette_bit_size(color_count) do
-    # Please implement the palette_bit_size/1 function
+    0
+    |> Stream.iterate(&(&1 + 1))
+    |> Stream.take_while(&(2 ** &1 < color_count))
+    |> Enum.count()
   end
 
-  def empty_picture() do
-    # Please implement the empty_picture/0 function
-  end
+  def empty_picture(), do: <<>>
 
-  def test_picture() do
-    # Please implement the test_picture/0 function
-  end
+  def test_picture(), do: <<0::2, 1::2, 2::2, 3::2>>
 
-  def prepend_pixel(picture, color_count, pixel_color_index) do
-    # Please implement the prepend_pixel/3 function
-  end
+  def prepend_pixel(picture, color_count, pixel_color_index),
+    do: <<pixel_color_index::size(palette_bit_size(color_count)), picture::bits>>
+
+  def get_first_pixel(<<>>, _), do: nil
 
   def get_first_pixel(picture, color_count) do
-    # Please implement the get_first_pixel/2 function
+    bit_size = palette_bit_size(color_count)
+    <<first_pixel::size(bit_size), _::bits>> = picture
+
+    first_pixel
   end
+
+  def drop_first_pixel(<<>>, _), do: <<>>
 
   def drop_first_pixel(picture, color_count) do
-    # Please implement the drop_first_pixel/2 function
+    bit_size = palette_bit_size(color_count)
+    <<_::size(bit_size), rest::bits>> = picture
+
+    rest
   end
 
-  def concat_pictures(picture1, picture2) do
-    # Please implement the concat_pictures/2 function
-  end
+  def concat_pictures(picture1, picture2), do: <<picture1::bits, picture2::bits>>
 end
