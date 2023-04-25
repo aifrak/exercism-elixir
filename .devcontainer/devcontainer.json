@@ -20,6 +20,7 @@
       "extensions": [
         // Elixir
         "jakebecker.elixir-ls",
+        "samuel-pordeus.elixir-test",
 
         // EditorConfig
         "editorconfig.editorconfig",
