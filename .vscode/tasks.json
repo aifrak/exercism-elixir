@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell",
+      "label": "Elixir Test: Run test at cursor",
+      "command": "${command:extension.elixirRunTestAtCursor}",
+      "group": {
+        "kind": "test"
+      },
+    },
+    {
+      "type": "shell",
+      "label": "Elixir Test: Run all tests on file",
+      "command": "${command:extension.elixirRunTestFile}",
+      "group": {
+        "kind": "test"
+      },
+    },
+  ]
+}
