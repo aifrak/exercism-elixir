@@ -1,8 +1,5 @@
 defmodule Poker do
-  @ranks ~w(2 3 4 5 6 7 8 9 10 J Q K A)
-         |> Enum.with_index(2)
-         |> Map.new()
-
+  @ranks ~w(2 3 4 5 6 7 8 9 10 J Q K A) |> Enum.with_index(2) |> Map.new()
   @ace_high @ranks["A"]
   @ace_low 1
 
@@ -53,11 +50,12 @@ defmodule Poker do
   """
   @spec best_hand(list(list(String.t()))) :: list(list(String.t()))
   def best_hand(hands) do
-    [best_hand | _] =
-      parsed_hands =
-      hands |> Enum.map(&parsed_hand/1) |> Enum.sort_by(&{&1.rank, &1.cards}, :desc)
-
-    parsed_hands |> Enum.take_while(&same_hand_rank?(&1, best_hand)) |> Enum.map(& &1.hand)
+    hands
+    |> Enum.map(&parsed_hand/1)
+    |> Enum.sort_by(&{&1.rank, &1.cards}, :desc)
+    |> then(fn [best_hand | _] = parsed_hands ->
+      parsed_hands |> Enum.take_while(&same_hand_rank?(&1, best_hand)) |> Enum.map(& &1.hand)
+    end)
   end
 
   defp same_hand_rank?(h1, h2), do: h1.rank == h2.rank and h1.cards == h2.cards
