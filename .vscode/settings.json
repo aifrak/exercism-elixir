@@ -1,7 +1,13 @@
 {
+  // Editor:
   "editor.rulers": [80],
+
   // Shellformat:
   "shellformat.useEditorConfig": true,
+
+  // Shellcheck:
+  "shellcheck.customArgs": ["-x"],
+
   // Override languages:
   "[dockerfile]": {
     "editor.defaultFormatter": "foxundermoon.shell-format"

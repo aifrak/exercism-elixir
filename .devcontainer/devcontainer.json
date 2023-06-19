@@ -7,6 +7,15 @@
   ],
   "service": "app",
   "workspaceFolder": "/app",
+  /*
+    Workaround to set APP_DIR to current workspace directory.
+    devcontainer is ignoring "workspaceFolder" when repository is cloned into a
+    container volume from VSCode.
+  */
+  "containerEnv": {
+    "APP_DIR": "${containerWorkspaceFolder}"
+  },
+  "postAttachCommand": "bash .devcontainer/setup-dev-env.sh",
   "customizations": {
     "vscode": {
       "settings": {
@@ -25,7 +34,7 @@
         // EditorConfig
         "editorconfig.editorconfig",
 
-        // Git:
+        // Git
         "eamodio.gitlens",
 
         // Github Actions

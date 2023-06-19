@@ -92,6 +92,8 @@ FROM ci as dev
 
 USER root
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
 RUN set -e \
   && export DEBIAN_FRONTEND=noninteractive \
   && echo "--- Install packages ---" \
@@ -111,7 +113,8 @@ RUN set -e \
   && rm -rf /var/lib/apt/lists/*
 
 # Add exercism cli
-RUN EXERCISM_VERSION="3.1.0" \
+RUN set -e \
+  && EXERCISM_VERSION="3.1.0" \
   && TARGET_DIR="/usr/local/bin" \
   && ARCHIVE_NAME="exercism.tgz" \
   && EXERCISM_DOWNLOAD_SHA256="97ba90d7d83a9e8de57066be4d42319c33165a355c7072f535ba37c00aedf432" \
