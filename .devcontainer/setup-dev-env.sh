@@ -2,21 +2,44 @@
 
 set -euo pipefail
 
-env_file="$APP_DIR/.env"
+readonly env_file="$APP_DIR/.env"
 
-if [[ ! -f $env_file ]]; then
-  echo "WARNING: .env file missing"
-elif [[ -z $EXERCISM_TOKEN ]]; then
-  echo "WARNING: EXERCISM_TOKEN is empty"
-else
-  # Export all environment variables
+function main() {
+  validate_env_file
+  export_env_vars
+  validate_exercism_token
+  configure_exercism
+}
+
+function export_env_vars() {
   set -a
   # shellcheck source="../.env"
   . "$env_file"
   set +a
+}
 
-  # Configure Exercism
-  exercism configure --token $EXERCISM_TOKEN --workspace "$APP_DIR" \
+function configure_exercism() {
+  exercism configure --token "$EXERCISM_TOKEN" --workspace "$APP_DIR" \
     &>/dev/null &&
-    echo "Exercism configured successfully."
-fi
+    print "Exercism configured successfully."
+}
+
+function validate_env_file() {
+  if [[ ! -f $env_file ]]; then
+    print "WARNING: .env file missing. Exercism configuration aborted."
+    exit 0
+  fi
+}
+
+function validate_exercism_token() {
+  if [[ -z $EXERCISM_TOKEN ]]; then
+    print "WARNING: EXERCISM_TOKEN is empty. Exercism configuration aborted."
+    exit 0
+  fi
+}
+
+function print() {
+  printf "%b\n" "$@"
+}
+
+main
