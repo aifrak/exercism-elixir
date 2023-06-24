@@ -2,3 +2,4 @@
 .elixir_ls
 .env
 .idea
+erl_crash.dump
