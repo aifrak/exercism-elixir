@@ -57,7 +57,7 @@ CMD [ "bash" ]
 
 FROM mvdan/shfmt:v3.4.3 as shfmt
 FROM hadolint/hadolint:v2.10.0 as hadolint
-FROM hexpm/elixir:1.15.0-erlang-26.0.1-ubuntu-jammy-20230126 as elixir
+FROM hexpm/elixir:1.14.5-erlang-25.3.2.2-ubuntu-jammy-20230126 as elixir
 # Install hex and rebar
 RUN set -e \
   && mix local.hex --force \
