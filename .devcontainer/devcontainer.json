@@ -23,6 +23,7 @@
         // "languagesMap" is set here instead of settings.json because of a bug
         // https://github.com/stackbreak/comment-divider/issues/35
         "comment-divider.languagesMap": {
+          "dotenv": ["#", "#"],
           "elixir": ["#", "#"]
         }
       },
@@ -33,6 +34,9 @@
 
         // EditorConfig
         "editorconfig.editorconfig",
+
+        // Dotenv
+        "dotenv.dotenv-vscode",
 
         // Git
         "eamodio.gitlens",
