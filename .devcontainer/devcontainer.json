@@ -15,7 +15,7 @@
   "containerEnv": {
     "APP_DIR": "${containerWorkspaceFolder}"
   },
-  "postAttachCommand": "bash .devcontainer/setup-dev-env.sh",
+  "onCreateCommand": "bash ./.devcontainer/setup.sh",
   "customizations": {
     "vscode": {
       "settings": {
