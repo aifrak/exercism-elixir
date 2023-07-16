@@ -11,8 +11,10 @@ defmodule FileSniffer do
                         {extension, type}
                       end)
   @types_by_binary Map.new(@media_types, fn {type, %{binary: binary}} -> {binary, type} end)
+  @extensions Enum.map(@types_by_extension, &(&1 |> elem(0) |> Atom.to_string()))
 
-  def type_from_extension(extension), do: @types_by_extension[String.to_atom(extension)]
+  def type_from_extension(extension) when extension not in @extensions, do: nil
+  def type_from_extension(extension), do: @types_by_extension[String.to_existing_atom(extension)]
 
   def type_from_binary(file_binary) do
     @types_by_binary
@@ -24,11 +26,12 @@ defmodule FileSniffer do
   end
 
   def verify(file_binary, extension) do
-    extension_type = type_from_extension(extension)
-    binary_type = type_from_binary(file_binary)
-
-    if extension_type == binary_type,
-      do: {:ok, extension_type},
-      else: {:error, "Warning, file format and file extension do not match."}
+    with extension_type when is_binary(extension_type) <- type_from_extension(extension),
+         binary_type when is_binary(extension_type) <- type_from_binary(file_binary),
+         true <- extension_type == binary_type do
+      {:ok, extension_type}
+    else
+      _ -> {:error, "Warning, file format and file extension do not match."}
+    end
   end
 end

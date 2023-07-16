@@ -6,8 +6,9 @@ defmodule FileSnifferTest do
   @jpg_file File.read!(Path.join("assets", "jpeg.jpg"))
   @png_file File.read!(Path.join("assets", "png-transparent.png"))
   @exe_file File.read!(Path.join("assets", "elf.o"))
+  @dat_file File.read!(Path.join("assets", "data.dat"))
 
-  describe "get type from extension:" do
+  describe "get type from extension" do
     @tag task_id: 1
     test "bmp" do
       assert FileSniffer.type_from_extension("bmp") == "image/bmp"
@@ -34,7 +35,24 @@ defmodule FileSnifferTest do
     end
   end
 
-  describe "get type from binary:" do
+  describe "return nil when type doesn't match" do
+    @tag task_id: 1
+    test "txt" do
+      assert FileSniffer.type_from_extension("txt") == nil
+    end
+
+    @tag task_id: 1
+    test "md" do
+      assert FileSniffer.type_from_extension("md") == nil
+    end
+
+    @tag task_id: 1
+    test "dat" do
+      assert FileSniffer.type_from_extension("dat") == nil
+    end
+  end
+
+  describe "get type from binary" do
     @tag task_id: 2
     test "bmp" do
       assert FileSniffer.type_from_binary(@bmp_file) == "image/bmp"
@@ -58,6 +76,40 @@ defmodule FileSnifferTest do
     @tag task_id: 2
     test "exe" do
       assert FileSniffer.type_from_binary(@exe_file) == "application/octet-stream"
+    end
+  end
+
+  describe "return nil when given uncompleted signature file" do
+    @tag task_id: 2
+    test "bmp" do
+      assert FileSniffer.type_from_binary(String.slice(@bmp_file, 0..0)) == nil
+    end
+
+    @tag task_id: 2
+    test "gif" do
+      assert FileSniffer.type_from_binary(String.slice(@gif_file, 0..1)) == nil
+    end
+
+    @tag task_id: 2
+    test "jpg" do
+      assert FileSniffer.type_from_binary(String.slice(@jpg_file, 0..1)) == nil
+    end
+
+    @tag task_id: 2
+    test "png" do
+      assert FileSniffer.type_from_binary(String.slice(@png_file, 0..5)) == nil
+    end
+
+    @tag task_id: 2
+    test "exe" do
+      assert FileSniffer.type_from_binary(String.slice(@exe_file, 0..2)) == nil
+    end
+  end
+
+  describe "return nil when given unknown signature" do
+    @tag task_id: 2
+    test "dat" do
+      assert FileSniffer.type_from_binary(@dat_file) == nil
     end
   end
 
@@ -116,6 +168,14 @@ defmodule FileSnifferTest do
     @tag task_id: 3
     test "exe" do
       assert FileSniffer.verify(@png_file, "exe") ==
+               {:error, "Warning, file format and file extension do not match."}
+    end
+  end
+
+  describe "reject unknown file types" do
+    @tag task_id: 3
+    test "dat" do
+      assert FileSniffer.verify(@dat_file, "dat") ==
                {:error, "Warning, file format and file extension do not match."}
     end
   end
