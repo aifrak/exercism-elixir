@@ -13,7 +13,21 @@ defmodule SgfParsing do
   def parse(encoded), do: encoded |> tokenize() |> parse_tokens() |> Tuple.delete_at(2)
 
   defp tokenize(encoded) do
-    ~r/(?<lead>\(?)(?<marker>;?)(?<key>\w*)(\[(?<property>[^[]*)\])?(?<trail>\)?)/
+    ~r/
+      (?<lead>\(?)
+      (?<marker>;?)
+      (?<key>\w*)
+      (?<property>
+        \[
+          (?:
+            \\.       (?# Matches either an escaped character)
+            |
+            [^\\\]]+  (?# Matches one or more characters that are not square brackets or backslashes)
+          )+
+        \]
+      )?
+      (?<trail>\)?)
+    /sx
     |> Regex.scan(encoded, capture: :all_names)
     |> Enum.reject(&Enum.all?(&1, fn elem -> elem == "" end))
     |> Enum.map(fn [k, l, m, p, t] -> %{lead: l, marker: m, key: k, property: p, trail: t} end)
@@ -70,14 +84,29 @@ defmodule SgfParsing do
     do: with(:ok <- validate_key(k), do: parse_tokens(tl, add_properties(acc, token_groups)))
 
   defp validate_key(key) do
-    if(key == String.upcase(key), do: :ok, else: {:error, "property must be in uppercase", []})
+    if key == String.upcase(key),
+      do: :ok,
+      else: {:error, "property must be in uppercase", []}
   end
 
   defp add_properties(node, [%{key: key} = token_group | tl]) do
-    [token_group | Enum.take_while(tl, &(&1.key == "" and &1.marker == ""))]
-    |> Enum.map(&Macro.unescape_string(&1.property))
+    tl
+    |> Enum.take_while(&(&1.key == "" and &1.marker == ""))
+    |> then(&[token_group | &1])
+    |> Enum.map(&clean_property(&1.property))
     |> then(&put_in(node.properties[key], &1))
   end
 
   defp add_child(node, child), do: update_in(node.children, &[child | &1])
+
+  defp clean_property(property), do: property |> remove_brackets() |> unescape()
+
+  defp remove_brackets(property), do: String.slice(property, 1..-2)
+
+  defp unescape(property) do
+    property
+    |> String.replace(~r/\\([[:alpha:]])/, "\\1")
+    |> String.replace(~r/\t/, " ")
+    |> Macro.unescape_string()
+  end
 end
