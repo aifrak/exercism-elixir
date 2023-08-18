@@ -56,22 +56,22 @@ defmodule GoCounting do
 
   defp territory_with_borders(board, positions, visited) do
     positions
-    |> Enum.flat_map(&adjacents/1)
+    |> Enum.flat_map(&adjacencies/1)
     |> Enum.map(&to_cell(board, &1))
     |> Enum.reject(fn {_, player} = cell -> player == nil or cell in visited end)
     |> then(&territory_with_borders(board, nones(&1), &1 ++ visited))
   end
 
-  defp adjacents(position) do
+  defp adjacencies(position) do
     [
-      adjacent(position, :top),
-      adjacent(position, :right),
-      adjacent(position, :bottom),
-      adjacent(position, :left)
+      adjacency(position, :top),
+      adjacency(position, :right),
+      adjacency(position, :bottom),
+      adjacency(position, :left)
     ]
   end
 
-  defp adjacent({x, y}, location) do
+  defp adjacency({x, y}, location) do
     case location do
       :top -> {x, y - 1}
       :right -> {x + 1, y}
